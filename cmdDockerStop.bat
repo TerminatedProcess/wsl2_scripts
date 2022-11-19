@@ -1,0 +1,1 @@
+powershell start-process powershell -verb runas c:\development\tools\dockerstop.ps1
