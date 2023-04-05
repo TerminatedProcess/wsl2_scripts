@@ -23,6 +23,7 @@ set SUBFILENAME=%CUR_MM%-%CUR_DD%-%CUR_YYYY%-%CUR_HH%-%CUR_NN%
 @echo on
 wsl --export Ubuntu C:\wslbackups\Ubuntu-%SUBFILENAME%.vhdx --vhd
 explorer c:\wslbackups
+pause
 ::powershell start-process powershell -verb runas c:\development\tools\dockerrestart.ps1
 ::pause Might need to restart Docker Desktop
 
