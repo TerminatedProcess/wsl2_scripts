@@ -3,8 +3,8 @@ Assumptions:
 1. c:\wslbackups is destination for backups
 2. c:\wsldistros is location where restored backups will be instantiated.
 3. Backup/Restore is the .vhdx file.
-4. Uses arguments only available in Windows 11. If you are on Win10, you will need to adjust the arguments
-   to use .tar instead. Tar is much slower, but smaller backups. The .vdhx backup however is seriously fast.
+4. Uses arguments only available in Windows 11. If you are on Win10, you 
+   may need to use .tar instead. Tar is much slower, but smaller backups. The .vdhx backup however is seriously fast.
 
 Tools:
 1. bkupwslubuntut.bat
@@ -13,19 +13,22 @@ Tools:
    - if you are not using Docker, you can comment out the Docker pause.
 
 2. rbkupwslubuntu.bat
-   - Install the setRestoreToWslUbuntu.reg file to install a right-click option for restoring a .vhdx.
+   - First install the setRestoreToWslUbuntu.reg file to install a right-click option for restoring a .vhdx.
    - Right-click on .vhdx and select RestoreToWSLUbuntu. 
    - If you are using Docker, you will need to restart Docker.
+   - if you do not have support for .vhdx (older windows 10 systems), you may have to modify this to use .tar files.
 
 3. setRestoreTOWSLUbuntu.reg
-   - Registry file to install a right-click option for restoring .vhdx files.
-   - For windows 10, you will need to modify this to restore a .tar file. 
+   - Registry file to install a right-click option for restoring .vhdx files. DISCLAIMER - PLEASE READ IT FIRST.
+   - For windows 10, you may need to modify this to restore a .tar file. 
 
-4. dockerrestart.ps1
-   - Will restart Docker for Desktop. Once it says restarting docker, you can proceed with backup/restore in other scripts.
-
-5. cmdDockerRestart.bat
+4. cmdDockerRestart.bat
    - Executes dockerrestart.ps1. I'm sure there is a better way, but I didn't have time to delve into Powershell.
 
-6. cmdDockerStop.bat
-   - Just stops Docker, but does not restart.
+5. cmdDockerStop.bat
+   - This script stops Dockeri
+
+For hot keys under windows, I use Executor. See this website https://executor.dk
+
+Mark Ryan
+mryan.dev@outlook.com
