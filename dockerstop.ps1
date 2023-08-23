@@ -14,3 +14,4 @@ foreach($svc in (Get-Service | Where-Object {$_.name -ilike "*docker*" -and $_.S
     $svc.WaitForStatus('Running','00:00:20')
 }
 Write-Output "$((Get-Date).ToString("HH:mm:ss")) - Docker for Desktop stopped"
+
