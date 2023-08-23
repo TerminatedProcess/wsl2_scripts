@@ -1,32 +1,31 @@
 Windows 11 utility scripts for WSL2
-Assumptions:
-1. c:\wslbackups is destination for backups
-2. c:\wsldistros is location where restored backups will be instantiated.
-3. Backup/Restore is the .vhdx file.
-4. Uses arguments only available in Windows 11. If you are on Win10, you 
-   may need to use .tar instead. Tar is much slower, but smaller backups. The .vdhx backup however is seriously fast.
+These Utilities allow you to easily backup and restore your Ubuntu WSL2 instance. Some assumptions
+1. Your instance is called Ubuntu. If you need a different name, you need to modify the scripts.
+2. c:\wslbackups is the location of backup .vhdx.
+3. C:\wsl2distros is the locatino of the current running Ubuntu image.
 
 Tools:
-1. bkupwslubuntut.bat
+1. setRestoreTOWSLUbuntu.reg
+   -  Registry file to install a right-click option for restoring .vhdx files. DISCLAIMER - PLEASE READ FILE FIRST.
+   -  Once added to your registry, you can right-click on a .vdhx file and select RestoreToWSLUbuntu.
+   -  There are no stops here. If you right-click a .vdhx file and select this option to restore, it will replace your 
+      current Ubuntu with the saved copy. 
+
+2. cmdDockerStop.bat
+   - This script stops Docker Desktop. You need to do this before backing up or the backup will fail.
+
+3. bkupwslubuntut.bat
    - Set a hotkey for this. This bat file will backup your current Ubuntu to c:\wslbackups with date/time stamp.
    - if you are using Docker for Desktop, you will need to run the DockerRestart.ps1 to free up locked resources.
    - if you are not using Docker, you can comment out the Docker pause.
 
-2. rbkupwslubuntu.bat
+4. rbkupwslubuntu.bat
    - First install the setRestoreToWslUbuntu.reg file to install a right-click option for restoring a .vhdx.
    - Right-click on .vhdx and select RestoreToWSLUbuntu. 
-   - If you are using Docker, you will need to restart Docker.
-   - if you do not have support for .vhdx (older windows 10 systems), you may have to modify this to use .tar files.
+   - After, if you are using Docker, you will need to restart Docker.
 
-3. setRestoreTOWSLUbuntu.reg
-   - Registry file to install a right-click option for restoring .vhdx files. DISCLAIMER - PLEASE READ IT FIRST.
-   - For windows 10, you may need to modify this to restore a .tar file. 
-
-4. cmdDockerRestart.bat
-   - Executes dockerrestart.ps1. I'm sure there is a better way, but I didn't have time to delve into Powershell.
-
-5. cmdDockerStop.bat
-   - This script stops Dockeri
+5. cmdDockerRestart.bat
+   - not in use. However, I don't want to toss the code. Instead, create a shortcut to Docker Desktop and if you like, set a hotkey.
 
 For hot keys under windows, I use Executor. See this website https://executor.dk
 
