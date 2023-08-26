@@ -16,13 +16,17 @@ Tools:
 
 3. bkupwslubuntut.bat
    - Set a hotkey for this. This bat file will backup your current Ubuntu to c:\wslbackups with date/time stamp.
+   - This batch file will accept one parameter with the name of the wsl instance you are backing up. E.g. ubuntu
    - if you are using Docker for Desktop, you will need to run the DockerRestart.ps1 to free up locked resources.
    - if you are not using Docker, you can comment out the Docker pause.
+   - Backup file is saved to c:\wslbackups\<<name of wsl2 instance>>. E.g. c:\wslbackups\ubuntu.
 
 4. rbkupwslubuntu.bat
    - First install the setRestoreToWslUbuntu.reg file to install a right-click option for restoring a .vhdx.
    - Right-click on .vhdx and select RestoreToWSLUbuntu. 
    - After, if you are using Docker, you will need to restart Docker.
+   - This batch file looks at the file name paramter deriving the name of the wsl2 instance. E.g. ubuntu.
+   - The vdhx file is restored to c:\wsldistros\<<name of wsl2 instance>>. E.g. c:\wsldistros\ubuntu\ext4.vdhx
 
 5. cmdDockerRestart.bat
    - not in use. However, I don't want to toss the code. Instead, create a shortcut to Docker Desktop and if you like, set a hotkey.
