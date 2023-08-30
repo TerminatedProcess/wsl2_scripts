@@ -24,7 +24,9 @@ wsl --shutdown
 wsl --unregister %wsl_os%
 wsl --import %wsl_os% %destDir% %inFile% --vhd
 wsl --setdefault %wsl_os%
-%wsl_os% config --default-user dev
+:: ubuntu config --default-user dev
+:: instead setup wsl.config default section
+pause
 exit
 
 :NoParam
