@@ -5,7 +5,7 @@ IF [%1] == [] GOTO NoParam
 
 :: Extract the first part of the filename
 for /f "delims=-" %%a in ("%~n1") do set "wsl_os=%%a"
-set destDir=c:\wsl2distros\%wsl_os%
+set destDir=c:\wsldistros\%wsl_os%
 set inFile=%1
 
 :: Check for existence of the destination directory and create if not present
