@@ -38,9 +38,19 @@ wsl --shutdown
 wsl --export %wsl_os% %outFile% --vhd
 @echo off
 
-explorer %destDir%
+:: Check if the backup file exists
+if not exist "%outFile%" (
+    echo ERROR! ERROR! ERROR!
+    echo BACKUP FAILED! BACKUP FAILED!
+    echo The backup file was not created successfully.
+    echo Please check the WSL instance name and try again.
+    echo ERROR! ERROR! ERROR!
+    echo BACKUP FAILED! BACKUP FAILED!
+) else (
+    echo Backup completed successfully.
+    explorer %destDir%
+)
+
 pause
 ::powershell start-process powershell -verb runas c:\development\tools\dockerrestart.ps1
 ::pause Might need to restart Docker Desktop
-
-
