@@ -7,7 +7,6 @@ echo CLOSE VSCODE AND OTHER WINDOWS
 echo CLOSE VSCODE AND OTHER WINDOWS
 echo CLOSE VSCODE AND OTHER WINDOWS
 echo CLOSE VSCODE AND OTHER WINDOWS
-
 set wsl_os=%1
 set destDir=c:\wslbackups\%wsl_os%
 
@@ -23,7 +22,8 @@ set dateTimeStr=%CUR_MM%-%CUR_DD%-%CUR_YYYY%-%CUR_HH%-%CUR_NN%
 set outFile=%destDir%\%wsl_os%-%dateTimeStr%.vhdx
 
 echo Backing up %wsl_os%
-pause Make sure everything is CLOSED! and SHUTDOWN Docker Desktop
+Echo Make sure everything is CLOSED! and SHUTDOWN Docker Desktop
+pause
 
 :: Test to make sure output directory exists
 if not exist "%destDir%\" (
@@ -34,7 +34,6 @@ if not exist "%destDir%\" (
 :: backup to vhdx
 wsl --terminate %wsl_os%
 wsl --shutdown
-@echo on
 wsl --export %wsl_os% %outFile% --vhd
 @echo off
 
