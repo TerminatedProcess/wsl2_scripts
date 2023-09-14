@@ -1,14 +1,27 @@
 :: Use to create an importable bkup of wsl ubuntu
 @echo off
 cls
-echo CLOSE VSCODE AND OTHER WINDOWS
-echo CLOSE VSCODE AND OTHER WINDOWS
-echo CLOSE VSCODE AND OTHER WINDOWS
-echo CLOSE VSCODE AND OTHER WINDOWS
-echo CLOSE VSCODE AND OTHER WINDOWS
-echo CLOSE VSCODE AND OTHER WINDOWS
 set wsl_os=%1
+echo Backing up %wsl_os%
 set destDir=c:\wslbackups\%wsl_os%
+
+:: Check if Docker Desktop or VSCode is running
+tasklist /FI "IMAGENAME eq Docker Desktop.exe" 2>NUL | find /I /N "Docker Desktop.exe">NUL
+if "%ERRORLEVEL%"=="0" (
+    echo Docker Desktop is running. Please close it before proceeding with backup.
+    echo Docker Desktop is running. Please close it before proceeding with backup.
+    echo Docker Desktop is running. Please close it before proceeding with backup.
+    echo Docker Desktop is running. Please close it before proceeding with backup.
+    echo Docker Desktop is running. Please close it before proceeding with backup.
+)
+tasklist /FI "IMAGENAME eq Code.exe" 2>NUL | find /I /N "Code.exe">NUL
+if "%ERRORLEVEL%"=="0" (
+    echo VSCode is running. Please close it before proceeding with backup.
+    echo VSCode is running. Please close it before proceeding with backup.
+    echo VSCode is running. Please close it before proceeding with backup.
+    echo VSCode is running. Please close it before proceeding with backup.
+    echo VSCode is running. Please close it before proceeding with backup.
+)
 
 set CUR_YYYY=%date:~10,4%
 set CUR_MM=%date:~4,2%
@@ -20,9 +33,6 @@ set CUR_SS=%time:~6,2%
 set CUR_MS=%time:~9,2%
 set dateTimeStr=%CUR_MM%-%CUR_DD%-%CUR_YYYY%-%CUR_HH%-%CUR_NN%
 set outFile=%destDir%\%wsl_os%-%dateTimeStr%.vhdx
-
-echo Backing up %wsl_os%
-Echo Make sure everything is CLOSED! and SHUTDOWN Docker Desktop
 pause
 
 :: Test to make sure output directory exists
@@ -32,6 +42,7 @@ if not exist "%destDir%\" (
 )
 
 :: backup to vhdx
+@echo on
 wsl --terminate %wsl_os%
 wsl --shutdown
 wsl --export %wsl_os% %outFile% --vhd
