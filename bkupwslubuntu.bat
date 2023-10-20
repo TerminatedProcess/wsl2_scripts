@@ -3,24 +3,29 @@
 cls
 set wsl_os=%1
 echo Backing up %wsl_os%
-set destDir=c:\wslbackups\%wsl_os%
+set wslroot=c:\wslbackups
+set destDir=%wslroot%\%wsl_os%
 
-:: Check if Docker Desktop or VSCode is running
+:loopCheck
+set retry=0
+
+:: Check if Docker Desktop is running
 tasklist /FI "IMAGENAME eq Docker Desktop.exe" 2>NUL | find /I /N "Docker Desktop.exe">NUL
 if "%ERRORLEVEL%"=="0" (
     echo Docker Desktop is running. Please close it before proceeding with backup.
-    echo Docker Desktop is running. Please close it before proceeding with backup.
-    echo Docker Desktop is running. Please close it before proceeding with backup.
-    echo Docker Desktop is running. Please close it before proceeding with backup.
-    echo Docker Desktop is running. Please close it before proceeding with backup.
+    set retry=1
 )
+
+:: Check if VSCode is running
 tasklist /FI "IMAGENAME eq Code.exe" 2>NUL | find /I /N "Code.exe">NUL
 if "%ERRORLEVEL%"=="0" (
     echo VSCode is running. Please close it before proceeding with backup.
-    echo VSCode is running. Please close it before proceeding with backup.
-    echo VSCode is running. Please close it before proceeding with backup.
-    echo VSCode is running. Please close it before proceeding with backup.
-    echo VSCode is running. Please close it before proceeding with backup.
+    set retry=1
+)
+
+if "%retry%"=="1" (
+    timeout /t 5 /nobreak >NUL
+    goto loopCheck
 )
 
 set CUR_YYYY=%date:~10,4%
@@ -33,7 +38,6 @@ set CUR_SS=%time:~6,2%
 set CUR_MS=%time:~9,2%
 set dateTimeStr=%CUR_MM%-%CUR_DD%-%CUR_YYYY%-%CUR_HH%-%CUR_NN%
 set outFile=%destDir%\%wsl_os%-%dateTimeStr%.vhdx
-pause
 
 :: Test to make sure output directory exists
 if not exist "%destDir%\" (
