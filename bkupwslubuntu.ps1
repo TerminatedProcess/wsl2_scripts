@@ -84,69 +84,88 @@ function Validate-BackupDir {
 
 
 function Select-Distro {
-    param (
-        [array]$distroList,
-        [string]$configFile
-    )
+    # Get all installed distros minus any Docker instances.
+    $distroList = Get-WSLDistros
 
     # Add "Cancel" as the last option in the distro list
     $distroList += "Cancel"
 
-    if (Test-Path $configFile) {
-        $config = ConvertFrom-StringData (Get-Content $configFile -Raw)
-        $previousSelection = $config.previousSelection
-    } else {
-        $previousSelection = ""
-    }
+    $iniData = Read-Ini
+    $previousSelection = $iniData["lastDistro"]
 
     $selectedIndex = $distroList.IndexOf($previousSelection)
     if ($selectedIndex -eq -1) { $selectedIndex = 0 }
 
-    while ($true) {
-        Clear-Host
-        Write-Host "Please select a WSL distro to backup:"
+        while ($true) {
+            Clear-Host
+            Write-Host "Please select a WSL distro to backup:"
 
-        for ($i = 0; $i -lt $distroList.Length; $i++) {
-            if ($i -eq $selectedIndex) {
-                Write-Host ("-> " + $distroList[$i]) -ForegroundColor Green
-            } else {
-                Write-Host ("   " + $distroList[$i])
+            for ($i = 0; $i -lt $distroList.Length; $i++) {
+                if ($i -eq $selectedIndex) {
+                    Write-Host ("-> " + $distroList[$i]) -ForegroundColor Green
+                } else {
+                    Write-Host ("   " + $distroList[$i])
+                }
+            }
+
+            $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+
+            switch ($key.VirtualKeyCode) {
+                38 { if ($selectedIndex -gt 0) { $selectedIndex-- } } # Up arrow
+                40 { if ($selectedIndex -lt $distroList.Length - 1) { $selectedIndex++ } } # Down arrow
+                13 { # Enter to Select
+                    $selectedDistro = ($distroList[$selectedIndex]).Trim()
+
+                    # If "Cancel" is selected, exit the script
+                    if ($selectedDistro -eq "Cancel") {
+                        exit 0
+                    }
+
+                    $config = @{
+                        wslroot = $config.wslroot
+                        previousSelection = $selectedDistro
+                    }
+                    $config | Out-String | Out-File $configFile
+                    return $selectedDistro
+                }
             }
         }
+}
 
-        $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 
-        switch ($key.VirtualKeyCode) {
-            38 { if ($selectedIndex -gt 0) { $selectedIndex-- } } # Up arrow
-            40 { if ($selectedIndex -lt $distroList.Length - 1) { $selectedIndex++ } } # Down arrow
-            13 { # Enter
-                $selectedDistro = ($distroList[$selectedIndex]).Trim()
+function Get-WSLDistros_old {
+    # Get the list of WSL distros
+    $distros = wsl --list --quiet
+    $distroList = $distros -split "`n" | Where-Object { $_ }
 
-                # If "Cancel" is selected, exit the script
-                if ($selectedDistro -eq "Cancel") {
-                    exit 0
-                }
-
-                $config = @{
-                    wslroot = $config.wslroot
-                    previousSelection = $selectedDistro
-                }
-                $config | Out-String | Out-File $configFile
-                return $selectedDistro
-            }
-        }
-    }
+    # Exclude unwanted distros
+    $excludedDistros = "docker-desktop", "docker-desktop-data"
+    $distroList = $distroList | Where-Object { $_ -notin $excludedDistros }
+    Analyze-String $distroList[2]
+    return $distroList
 }
 
 
 function Get-WSLDistros {
     # Get the list of WSL distros
     $distros = wsl --list --quiet
-    $distroList = $distros -split "`n" | Where-Object { $_.Trim() -ne "" }
+    $distroList = $distros -split "`n" | Where-Object { $_ }
 
-    # Exclude unwanted distros
+    # Exclude unwanted distros and remove null characters
     $excludedDistros = "docker-desktop", "docker-desktop-data"
-    return $distroList | Where-Object { $_ -notin $excludedDistros }
+    $cleanedDistroList = $distroList | Where-Object { $_ -notin $excludedDistros } | ForEach-Object {
+        $_ -replace "`0", "" # Removing null characters
+    }
+    
+    # Filter out empty strings and build the return list
+    $returnList = @()
+    foreach ($distro in $cleanedDistroList) {
+        if ($distro) {
+            $returnList += ,$distro
+        }
+    }
+
+    return ,$returnList
 }
 
 
@@ -161,15 +180,13 @@ function Check-Process {
 
 ####################################################################################
 # Start of main code
-cls
+Clear-Host
 
 # Usage
-$wslroot, $configFile = Validate-BackupDir
-Read-Host "Press Enter"
-exit 0
+$backupDir = Validate-BackupDir
+#Read-Host "Press Enter"
 
-# $distros = Get-WSLDistros
-# $wsl_os = Select-Distro -distroList $distros -configFile $configFile
+$distro = Select-Distro
 
 # Clear-Host
 
