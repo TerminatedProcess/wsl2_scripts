@@ -41,7 +41,7 @@ function Validate-BackupDir {
     }
 
     if (-Not [string]::IsNullOrWhiteSpace($backupDir) -and -Not (Test-Path $backupDir -PathType Container)) {
-        Write-Host "Directory does not exist. Please enter a valid directory."
+        Write-Host "Directory $backupDir does not exist. Please enter a valid directory."
     }
 
     while ($true) {
