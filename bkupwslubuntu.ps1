@@ -12,7 +12,7 @@ class IniFile {
         if (Test-Path $this.configFile) {
             $iniContent = Get-Content $this.configFile | Out-String
             $iniData = $iniContent | ConvertFrom-StringData
-            $this.backupDir = $iniData["backupDir"]
+            $this.backupDir = $iniData["backupDir"] -replace '/', '\\'
             $this.lastDistro = $iniData["lastDistro"]
         } else {
             $this.backupDir = ""
@@ -22,7 +22,7 @@ class IniFile {
 
     [void]Save() {
         $iniData = @{
-            backupDir  = $this.backupDir
+            backupDir  = $this.backupDir -replace '\\', '/'
             lastDistro = $this.lastDistro
         }
         $iniData.GetEnumerator() | ForEach-Object {
