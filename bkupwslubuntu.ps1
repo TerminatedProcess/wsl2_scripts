@@ -55,7 +55,7 @@ function Validate-BackupDir {
             $iniFile.Save()
             break
         } else {
-            Write-Host "Directory does not exist. Please enter a valid directory."
+            Write-Host "Directory $backupDir does not exist. Please enter a valid directory."
         }
     }
 }
