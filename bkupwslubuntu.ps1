@@ -32,8 +32,6 @@ class IniFile {
     }
 }
 
-
-
 function Validate-BackupDir {
     # This function will get or create the ini file. If needed it will set the backup directory
     $iniFile = $global:iniFile
@@ -62,7 +60,6 @@ function Validate-BackupDir {
 
     return $backupDir
 }
-
 
 function Select-Distro {
     # Get all installed distros minus any Docker instances.
@@ -109,9 +106,6 @@ function Select-Distro {
             }
         }
 }
-
-
-
 
 function Get-WSLDistros {
     # Get the list of WSL distros
@@ -180,6 +174,7 @@ function Test-Ini {
 $global:iniFile = [IniFile]::new()
 
 Clear-Host
+#Test-Ini
 
 # Usage
 $backupDir = Validate-BackupDir
