@@ -145,6 +145,36 @@ function Check-Process {
     return $process
 }
 
+function Test-Ini {
+    # Create a new instance of the IniFile class
+    $iniFile = [IniFile]::new()
+
+    # Set some values
+    $iniFile.backupDir = "C:\testBackupDir"
+    $iniFile.lastDistro = "testDistro"
+
+    # Save the values
+    $iniFile.Save()
+
+    # Read the values back
+    $iniFile.Read()
+
+    # Verify that the values were saved correctly
+    if ($iniFile.backupDir -ne "C:\testBackupDir") {
+        Write-Host "Test failed: backupDir was not saved correctly."
+    }
+    if ($iniFile.lastDistro -ne "testDistro") {
+        Write-Host "Test failed: lastDistro was not saved correctly."
+    }
+
+    # Reset the values to their original state
+    $iniFile.backupDir = "C:\wslbackups"
+    $iniFile.lastDistro = ""
+    $iniFile.Save()
+
+    Write-Host "Test-Ini completed successfully."
+}
+
 ####################################################################################
 # Start of main code
 $global:iniFile = [IniFile]::new()
@@ -209,32 +239,3 @@ Clear-Host
 # }
 
 Read-Host "Press Enter to exit..."
-function Test-Ini {
-    # Create a new instance of the IniFile class
-    $iniFile = [IniFile]::new()
-
-    # Set some values
-    $iniFile.backupDir = "C:\testBackupDir"
-    $iniFile.lastDistro = "testDistro"
-
-    # Save the values
-    $iniFile.Save()
-
-    # Read the values back
-    $iniFile.Read()
-
-    # Verify that the values were saved correctly
-    if ($iniFile.backupDir -ne "C:\testBackupDir") {
-        Write-Host "Test failed: backupDir was not saved correctly."
-    }
-    if ($iniFile.lastDistro -ne "testDistro") {
-        Write-Host "Test failed: lastDistro was not saved correctly."
-    }
-
-    # Reset the values to their original state
-    $iniFile.backupDir = "C:\wslbackups"
-    $iniFile.lastDistro = ""
-    $iniFile.Save()
-
-    Write-Host "Test-Ini completed successfully."
-}
