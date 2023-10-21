@@ -89,7 +89,6 @@ function Select-Distro {
     if ($distroList.Count -eq 1) {
         $iniFile = $global:iniFile
         $iniFile.lastDistro = $distroList[0]
-        return $distroList[0]
     }
 
     # Add "Cancel" as the last option in the distro list
