@@ -1,62 +1,43 @@
-function getConfigFile {
-    # returns the config file path and file name
-    $configFile = Join-Path $PSScriptRoot "wslbackup.ini"
-    return $configFile
-}
+class IniFile {
+    [string]$lastDistro
+    [string]$backupDir
+    [string]$configFile
 
-
-function Set-Data {
-    # Creates a populated hashtable data object
-    param (
-        [string]$backupDir,
-        [string]$lastDistro
-    )
-
-    # Returns a populated data object
-    $iniData = @{
-        backupDir  = $backupDir
-        lastDistro = $lastDistro
+    IniFile([string]$configFile) {
+        $this.configFile = $configFile
+        $this.Read()
     }
 
-    return $iniData
-}
-
-
-function Write-Ini {
-    # This function will update the config file with the contents of the data set.
-    param (
-        [hashtable]$data
-    )
-
-    $configFile = getConfigFile
-    $data.GetEnumerator() | ForEach-Object {
-        "$($_.Key)=$($_.Value)"
-    } | Out-File $configFile
-}
-
-function Read-Ini {
-    # This function will read the entries from the config file
-    $configFile = getConfigFile
-
-    if (Test-Path $configFile) {
-        $iniContent = Get-Content $configFile | Out-String
-        $iniContent = $iniContent -replace '\\', '\\\\' # Escape the backslashes
-        $iniData = $iniContent | ConvertFrom-StringData
-        $iniData = Set-Data $iniData["backupDir"] $iniData["lastDistro"]
-    } else {
-        $iniData = Set-Data "", ""
-        Write-Ini -data $iniData
+    [void]Read() {
+        if (Test-Path $this.configFile) {
+            $iniContent = Get-Content $this.configFile | Out-String
+            $iniContent = $iniContent -replace '\\', '\\\\' # Escape the backslashes
+            $iniData = $iniContent | ConvertFrom-StringData
+            $this.backupDir = $iniData["backupDir"]
+            $this.lastDistro = $iniData["lastDistro"]
+        } else {
+            $this.backupDir = "C:\wslbackups"
+            $this.lastDistro = ""
+        }
     }
 
-    return $iniData
+    [void]Save() {
+        $iniData = @{
+            backupDir  = $this.backupDir
+            lastDistro = $this.lastDistro
+        }
+        $iniData.GetEnumerator() | ForEach-Object {
+            "$($_.Key)=$($_.Value)"
+        } | Out-File $this.configFile
+    }
 }
 
 
 
 function Validate-BackupDir {
     # This function will get or create the ini file. If needed it will set the backup directory
-    $iniData = Read-Ini # Get/create ini file
-    $backupDir = $iniData["backupDir"]
+    $iniFile = [IniFile]::new((Join-Path $PSScriptRoot "wslbackup.ini"))
+    $backupDir = $iniFile.backupDir
 
     while ($true) {
         if (-Not [string]::IsNullOrWhiteSpace($backupDir) -and (Test-Path $backupDir -PathType Container)) {
@@ -74,8 +55,8 @@ function Validate-BackupDir {
             Write-Host "Directory does not exist. Please enter a valid directory."
         } else {
             # Update the ini file with the new backup directory
-            $iniData["backupDir"] = $backupDir
-            Write-Ini -data $iniData
+            $iniFile.backupDir = $backupDir
+            $iniFile.Save()
         }
     }
 
@@ -90,8 +71,8 @@ function Select-Distro {
     # Add "Cancel" as the last option in the distro list
     $distroList += "Cancel"
 
-    $iniData = Read-Ini
-    $previousSelection = $iniData["lastDistro"]
+    $iniFile = [IniFile]::new((Join-Path $PSScriptRoot "wslbackup.ini"))
+    $previousSelection = $iniFile.lastDistro
 
     $selectedIndex = $distroList.IndexOf($previousSelection)
     if ($selectedIndex -eq -1) { $selectedIndex = 0 }
@@ -121,9 +102,8 @@ function Select-Distro {
                         exit 0
                     }
 
-                    $iniData = Read-Ini
-                    $iniData["lastDistro"] = $selectedDistro
-                    Write-Ini $iniData
+                    $iniFile.lastDistro = $selectedDistro
+                    $iniFile.Save()
                     return $selectedDistro
                 }
             }
