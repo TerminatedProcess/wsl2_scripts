@@ -11,7 +11,6 @@ class IniFile {
     [void]Read() {
         if (Test-Path $this.configFile) {
             $iniContent = Get-Content $this.configFile | Out-String
-            $iniContent = $iniContent -replace '\\', '\\\\' # Escape the backslashes
             $iniData = $iniContent | ConvertFrom-StringData
             $this.backupDir = $iniData["backupDir"]
             $this.lastDistro = $iniData["lastDistro"]
@@ -52,13 +51,35 @@ function Validate-BackupDir {
 
         if (Test-Path $backupDir -PathType Container) {
             $iniFile.backupDir = $backupDir
-            $iniFile.Save()
             break
         } else {
             Write-Host "Directory $backupDir does not exist. Please enter a valid directory."
         }
     }
 }
+
+function Get-WSLDistros {
+    # Get the list of installed WSL distros
+    $distros = wsl --list --quiet
+    $distroList = $distros -split "`n" | Where-Object { $_ }
+
+    # Exclude unwanted distros and remove null characters
+    $excludedDistros = "docker-desktop", "docker-desktop-data"
+    $cleanedDistroList = $distroList | Where-Object { $_ -notin $excludedDistros } | ForEach-Object {
+        $_ -replace "`0", "" # Removing null characters
+    }
+    
+    # Filter out empty strings and build the return list
+    $returnList = @()
+    foreach ($distro in $cleanedDistroList) {
+        if ($distro) {
+            $returnList += ,$distro
+        }
+    }
+
+    return ,$returnList
+}
+
 
 function Select-Distro {
     # Get all installed distros minus any Docker instances.
@@ -99,35 +120,11 @@ function Select-Distro {
                     }
 
                     $iniFile.lastDistro = $selectedDistro
-                    $iniFile.Save()
                     return $selectedDistro
                 }
             }
         }
 }
-
-function Get-WSLDistros {
-    # Get the list of WSL distros
-    $distros = wsl --list --quiet
-    $distroList = $distros -split "`n" | Where-Object { $_ }
-
-    # Exclude unwanted distros and remove null characters
-    $excludedDistros = "docker-desktop", "docker-desktop-data"
-    $cleanedDistroList = $distroList | Where-Object { $_ -notin $excludedDistros } | ForEach-Object {
-        $_ -replace "`0", "" # Removing null characters
-    }
-    
-    # Filter out empty strings and build the return list
-    $returnList = @()
-    foreach ($distro in $cleanedDistroList) {
-        if ($distro) {
-            $returnList += ,$distro
-        }
-    }
-
-    return ,$returnList
-}
-
 
 function Check-Process {
     param (
@@ -177,10 +174,8 @@ Clear-Host
 
 # Usage
 $backupDir = Validate-BackupDir
-#Read-Host "Press Enter"
-
 $distro = Select-Distro
-Clear-Host
+#Clear-Host
 
 # $destDir = Join-Path $wslroot $distro
 
@@ -232,4 +227,4 @@ Clear-Host
 #     explorer $destDir
 # }
 
-Read-Host "Press Enter to exit..."
+$iniFile.Save()
