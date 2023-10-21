@@ -3,8 +3,8 @@ class IniFile {
     [string]$backupDir
     [string]$configFile
 
-    IniFile([string]$configFile) {
-        $this.configFile = $configFile
+    IniFile() {
+        $this.configFile = Join-Path $PSScriptRoot "wslbackup.ini"
         $this.Read()
     }
 
@@ -36,7 +36,7 @@ class IniFile {
 
 function Validate-BackupDir {
     # This function will get or create the ini file. If needed it will set the backup directory
-    $iniFile = [IniFile]::new((Join-Path $PSScriptRoot "wslbackup.ini"))
+    $iniFile = [IniFile]::new()
     $backupDir = $iniFile.backupDir
 
     while ($true) {
@@ -71,7 +71,7 @@ function Select-Distro {
     # Add "Cancel" as the last option in the distro list
     $distroList += "Cancel"
 
-    $iniFile = [IniFile]::new((Join-Path $PSScriptRoot "wslbackup.ini"))
+    $iniFile = [IniFile]::new()
     $previousSelection = $iniFile.lastDistro
 
     $selectedIndex = $distroList.IndexOf($previousSelection)
