@@ -33,29 +33,31 @@ class IniFile {
 }
 
 function Validate-BackupDir {
-    # This function will get or create the ini file. If needed it will set the backup directory
     $iniFile = $global:iniFile
     $backupDir = $iniFile.backupDir
 
+    if (-Not [string]::IsNullOrWhiteSpace($backupDir) -and (Test-Path $backupDir -PathType Container)) {
+        return
+    }
+
+    if (-Not [string]::IsNullOrWhiteSpace($backupDir) -and -Not (Test-Path $backupDir -PathType Container)) {
+        Write-Host "Directory does not exist. Please enter a valid directory."
+    }
+
     while ($true) {
-        if (-Not [string]::IsNullOrWhiteSpace($backupDir) -and (Test-Path $backupDir -PathType Container)) {
-            break # Exit the loop if a valid directory is provided
+        $backupDir = Read-Host "Please enter the path to the backup folder (default: C:\wslbackups)"
+        if ([string]::IsNullOrWhiteSpace($backupDir)) {
+            $backupDir = "C:\wslbackups"
         }
 
-        # Ask the user for the backup directory
-        $backupDir = Read-Host "Please enter the path to the backup folder"
-
-        if (-Not (Test-Path $backupDir -PathType Container)) {
-            Write-Host "Directory does not exist. Please enter a valid directory."
-        } else {
-            # Update the ini file with the new backup directory
+        if (Test-Path $backupDir -PathType Container) {
             $iniFile.backupDir = $backupDir
             $iniFile.Save()
             break
+        } else {
+            Write-Host "Directory does not exist. Please enter a valid directory."
         }
     }
-
-    return $backupDir
 }
 
 function Select-Distro {
