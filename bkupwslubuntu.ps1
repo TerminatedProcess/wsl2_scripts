@@ -36,7 +36,7 @@ class IniFile {
 
 function Validate-BackupDir {
     # This function will get or create the ini file. If needed it will set the backup directory
-    $iniFile = [IniFile]::new()
+    $iniFile = $global:iniFile
     $backupDir = $iniFile.backupDir
 
     while ($true) {
@@ -71,7 +71,7 @@ function Select-Distro {
     # Add "Cancel" as the last option in the distro list
     $distroList += "Cancel"
 
-    $iniFile = [IniFile]::new()
+    $iniFile = $global:iniFile
     $previousSelection = $iniFile.lastDistro
 
     $selectedIndex = $distroList.IndexOf($previousSelection)
@@ -147,6 +147,8 @@ function Check-Process {
 
 ####################################################################################
 # Start of main code
+$global:iniFile = [IniFile]::new()
+
 Clear-Host
 
 # Usage
@@ -154,7 +156,6 @@ $backupDir = Validate-BackupDir
 #Read-Host "Press Enter"
 
 $distro = Select-Distro
-$iniData = Read-Ini
 Clear-Host
 
 # $destDir = Join-Path $wslroot $distro
