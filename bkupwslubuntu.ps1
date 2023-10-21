@@ -121,11 +121,9 @@ function Select-Distro {
                         exit 0
                     }
 
-                    $config = @{
-                        wslroot = $config.wslroot
-                        previousSelection = $selectedDistro
-                    }
-                    $config | Out-String | Out-File $configFile
+                    $iniData = Read-Ini
+                    $iniData["lastDistro"] = $selectedDistro
+                    Write-Ini $iniData
                     return $selectedDistro
                 }
             }
@@ -187,10 +185,10 @@ $backupDir = Validate-BackupDir
 #Read-Host "Press Enter"
 
 $distro = Select-Distro
+$iniData = Read-Ini
+Clear-Host
 
-# Clear-Host
-
-# $destDir = Join-Path $wslroot $wsl_os
+# $destDir = Join-Path $wslroot $distro
 
 # # Loop to check if Docker Desktop or VSCode is running
 # do {
