@@ -111,17 +111,6 @@ function Select-Distro {
 }
 
 
-function Get-WSLDistros_old {
-    # Get the list of WSL distros
-    $distros = wsl --list --quiet
-    $distroList = $distros -split "`n" | Where-Object { $_ }
-
-    # Exclude unwanted distros
-    $excludedDistros = "docker-desktop", "docker-desktop-data"
-    $distroList = $distroList | Where-Object { $_ -notin $excludedDistros }
-    Analyze-String $distroList[2]
-    return $distroList
-}
 
 
 function Get-WSLDistros {
