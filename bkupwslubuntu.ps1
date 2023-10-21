@@ -80,21 +80,20 @@ function Get-WSLDistros {
     return ,$returnList
 }
 
-
 function Select-Distro {
     # Get all installed distros minus any Docker instances.
     $distroList = Get-WSLDistros
+    $iniFile = $global:iniFile
 
     # If there is only one distro, automatically select it
     if ($distroList.Count -eq 1) {
-        $iniFile = $global:iniFile
         $iniFile.lastDistro = $distroList[0]
+        return
     }
 
     # Add "Cancel" as the last option in the distro list
     $distroList += "Cancel"
 
-    $iniFile = $global:iniFile
     $previousSelection = $iniFile.lastDistro
 
     $selectedIndex = $distroList.IndexOf($previousSelection)
@@ -179,8 +178,10 @@ Clear-Host
 #Test-Ini
 
 # Usage
-$backupDir = Validate-BackupDir
-$distro = Select-Distro
+Validate-BackupDir
+Select-Distro
+Write-Host $iniFile.backupDir
+Write-Host $iniFile.lastDistro
 #Clear-Host
 
 # $destDir = Join-Path $wslroot $distro
