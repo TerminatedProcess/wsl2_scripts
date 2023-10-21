@@ -85,6 +85,13 @@ function Select-Distro {
     # Get all installed distros minus any Docker instances.
     $distroList = Get-WSLDistros
 
+    # If there is only one distro, automatically select it
+    if ($distroList.Count -eq 1) {
+        $iniFile = $global:iniFile
+        $iniFile.lastDistro = $distroList[0]
+        return $distroList[0]
+    }
+
     # Add "Cancel" as the last option in the distro list
     $distroList += "Cancel"
 
