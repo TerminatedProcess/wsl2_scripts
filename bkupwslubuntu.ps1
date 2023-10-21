@@ -85,6 +85,11 @@ function Select-Distro {
     $distroList = Get-WSLDistros
     $iniFile = $global:iniFile
 
+    # Validate iniFile.lastDistro against distroList
+    if ($iniFile.lastDistro -notin $distroList) {
+        $iniFile.lastDistro = ""
+    }
+
     # If there is only one distro, automatically select it
     if ($distroList.Count -eq 1) {
         $iniFile.lastDistro = $distroList[0]
