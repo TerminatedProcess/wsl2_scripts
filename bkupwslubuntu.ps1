@@ -16,7 +16,7 @@ class IniFile {
             $this.backupDir = $iniData["backupDir"]
             $this.lastDistro = $iniData["lastDistro"]
         } else {
-            $this.backupDir = "C:\wslbackups"
+            $this.backupDir = ""
             $this.lastDistro = ""
         }
     }
@@ -43,11 +43,7 @@ function Validate-BackupDir {
         }
 
         # Ask the user for the backup directory
-        $backupDir = Read-Host "Please enter the path to the backup folder (default: C:\wslbackups)"
-        
-        if ([string]::IsNullOrWhiteSpace($backupDir)) {
-            $backupDir = "C:\wslbackups"
-        }
+        $backupDir = Read-Host "Please enter the path to the backup folder"
 
         if (-Not (Test-Path $backupDir -PathType Container)) {
             Write-Host "Directory does not exist. Please enter a valid directory."
@@ -55,6 +51,7 @@ function Validate-BackupDir {
             # Update the ini file with the new backup directory
             $iniFile.backupDir = $backupDir
             $iniFile.Save()
+            break
         }
     }
 
