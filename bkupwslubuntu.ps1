@@ -12,7 +12,7 @@ class IniFile {
         if (Test-Path $this.configFile) {
             $iniContent = Get-Content $this.configFile | Out-String
             $iniData = $iniContent | ConvertFrom-StringData
-            $this.backupDir = $iniData["backupDir"] -replace '/', '\'
+            $this.backupDir = $iniData["backupDir"]
             $this.lastDistro = $iniData["lastDistro"]
         } else {
             $this.backupDir = ""
@@ -22,7 +22,7 @@ class IniFile {
 
     [void]Save() {
         $iniData = @{
-            backupDir  = $this.backupDir -replace '\\', '/'
+            backupDir  = $this.backupDir
             lastDistro = $this.lastDistro
         }
         $iniData.GetEnumerator() | ForEach-Object {
@@ -44,9 +44,9 @@ function Validate-BackupDir {
     }
 
     while ($true) {
-        $backupDir = Read-Host "Please enter the path to the backup folder (default: C:\wslbackups)"
+        $backupDir = Read-Host "Please enter the path to the backup folder (default: C:/wslbackups)"
         if ([string]::IsNullOrWhiteSpace($backupDir)) {
-            $backupDir = "C:\wslbackups"
+            $backupDir = "C:/wslbackups"
         }
 
         if (Test-Path $backupDir -PathType Container) {
@@ -150,7 +150,7 @@ function Test-Ini {
     $iniFile = [IniFile]::new()
 
     # Set some values
-    $iniFile.backupDir = "C:\testBackupDir"
+    $iniFile.backupDir = "C:/testBackupDir"
     $iniFile.lastDistro = "testDistro"
 
     # Save the values
@@ -160,7 +160,7 @@ function Test-Ini {
     $iniFile.Read()
 
     # Verify that the values were saved correctly
-    if ($iniFile.backupDir -ne "C:\testBackupDir") {
+    if ($iniFile.backupDir -ne "C:/testBackupDir") {
         Write-Host "Test failed: backupDir was not saved correctly."
     }
     if ($iniFile.lastDistro -ne "testDistro") {
@@ -168,7 +168,7 @@ function Test-Ini {
     }
 
     # Reset the values to their original state
-    $iniFile.backupDir = "C:\wslbackups"
+    $iniFile.backupDir = "C:/wslbackups"
     $iniFile.lastDistro = ""
     $iniFile.Save()
 
@@ -185,59 +185,57 @@ Clear-Host
 # Usage
 Validate-BackupDir
 Select-Distro
-Write-Host $iniFile.backupDir
-Write-Host $iniFile.lastDistro
-#Clear-Host
-
-# $destDir = Join-Path $wslroot $distro
-
-# # Loop to check if Docker Desktop or VSCode is running
-# do {
-#     $retry = $false
-
-#     if (Check-Process "Docker Desktop") {
-#         Write-Host "Docker Desktop is running. Please close it before proceeding with backup."
-#         $retry = $true
-#     }
-
-#     if (Check-Process "Code") {
-#         Write-Host "VSCode is running. Please close it before proceeding with backup."
-# #        $retry = $true
-#     }
-
-#     if ($retry) {
-#         Start-Sleep -Seconds 5
-#     }
-
-# } while ($retry)
-
-# $dateTimeStr = Get-Date -Format "MM-dd-yyyy-HH-mm"
-# $outFile = Join-Path $destDir "$wsl_os-$dateTimeStr.vhdx"
-
-# # Test to make sure output directory exists
-# if (-Not (Test-Path $destDir)) {
-#     Write-Host "Directory not found. Creating $destDir..."
-#     New-Item -Path $destDir -ItemType Directory
-# }
-
-# # Backup to vhdx
-# Write-Host "Backing up $wsl_os"
-# #wsl --terminate $wsl_os
-# #wsl --shutdown
-# #wsl --export $wsl_os $outFile --vhd
-
-# # Check if the backup file exists
-# if (-Not (Test-Path $outFile)) {
-#     Write-Host "ERROR! ERROR! ERROR!"
-#     Write-Host "BACKUP FAILED! BACKUP FAILED!"
-#     Write-Host "The backup file was not created successfully."
-#     Write-Host "Please check the WSL instance name and try again."
-#     Write-Host "ERROR! ERROR! ERROR!"
-#     Write-Host "BACKUP FAILED! BACKUP FAILED!"
-# } else {
-#     Write-Host "Backup completed successfully."
-#     explorer $destDir
-# }
-
 $iniFile.Save()
-exit 0
+
+$wslroot = $iniFile.backupDir
+$distro = $iniFile.lastDistro
+$destDir = Join-Path $wslroot $distro
+
+# Loop to check if Docker Desktop or VSCode is running
+do {
+    $retry = $false
+
+    if (Check-Process "Docker Desktop") {
+        Write-Host "Docker Desktop is running. Please close it before proceeding with backup."
+        $retry = $true
+    }
+
+    if (Check-Process "Code") {
+        Write-Host "VSCode is running. Please close it before proceeding with backup."
+        $retry = $true
+    }
+
+    if ($retry) {
+        Start-Sleep -Seconds 5
+    }
+
+} while ($retry)
+
+$dateTimeStr = Get-Date -Format "MM-dd-yyyy-HH-mm"
+$outFile = Join-Path $destDir "$distro-$dateTimeStr.vhdx"
+
+# Test to make sure output directory exists
+if (-Not (Test-Path $destDir)) {
+    Write-Host "Directory not found. Creating $destDir..."
+    New-Item -Path $destDir -ItemType Directory
+}
+
+# Backup to vhdx
+Write-Host "Backing up $distro to $outFile"
+wsl --terminate $distro
+wsl --shutdown
+wsl --export $distro $outFile --vhd
+
+# Check if the backup file exists
+if (-Not (Test-Path $outFile)) {
+    Write-Host "ERROR! ERROR! ERROR!"
+    Write-Host "BACKUP FAILED! BACKUP FAILED!"
+    Write-Host "The backup file was not created successfully."
+    Write-Host "Please check the WSL instance name and try again."
+    Write-Host "ERROR! ERROR! ERROR!"
+    Write-Host "BACKUP FAILED! BACKUP FAILED!"
+} else {
+    Write-Host "Backup completed successfully."
+    explorer $destDir
+}
+
