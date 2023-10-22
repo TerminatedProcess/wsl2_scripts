@@ -12,7 +12,7 @@ class IniFile {
         if (Test-Path $this.configFile) {
             $iniContent = Get-Content $this.configFile | Out-String
             $iniData = $iniContent | ConvertFrom-StringData
-            $this.backupDir = $iniData["backupDir"] -replace '/', '\\'
+            $this.backupDir = $iniData["backupDir"] -replace '/', '\'
             $this.lastDistro = $iniData["lastDistro"]
         } else {
             $this.backupDir = ""
@@ -240,3 +240,4 @@ Write-Host $iniFile.lastDistro
 # }
 
 $iniFile.Save()
+exit 0
