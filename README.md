@@ -1,8 +1,5 @@
 Windows 11 utility scripts for WSL2
-These Utilities allow you to easily backup and restore your Ubuntu WSL2 instance. Some assumptions
-1. Your instance is called Ubuntu. If you need a different name, you need to modify the scripts.
-2. c:\wslbackups is the location of backup .vhdx.
-3. C:\wsl2distros is the locatino of the current running Ubuntu image.
+These Utilities allow you to easily backup and restore your Ubuntu WSL2 instance.
 
 Tools:
 1. setRestoreTOWSLUbuntu.reg
