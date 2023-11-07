@@ -221,7 +221,7 @@ do {
     $retry = $false
 
     if (Check-Process "Docker Desktop") {
-        Write-Host "Docker Desktop is running. Please close it before proceeding with backup."
+        Write-Host "Docker Desktop is running. Attempting to shutdown Docker Desktop."
         Docker-Stop
         $retry = $true
     }
