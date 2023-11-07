@@ -222,6 +222,7 @@ do {
 
     if (Check-Process "Docker Desktop") {
         Write-Host "Docker Desktop is running. Please close it before proceeding with backup."
+        Docker-Stop
         $retry = $true
     }
 
