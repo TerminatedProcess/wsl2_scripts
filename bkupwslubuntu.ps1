@@ -221,8 +221,7 @@ do {
     $retry = $false
 
     if (Check-Process "Docker Desktop") {
-        Write-Host "Docker Desktop is running. Attempting to shutdown Docker Desktop."
-        Docker-Stop
+        Write-Host "Docker Desktop is running. Stop the service with the system tray icon for Docker (far right in toolbar)."
         $retry = $true
     }
 
