@@ -9,39 +9,41 @@ These tools should be cloned to c:\development\tools\wsltools. You can, of cours
 
 Tools:
 1. setRestoreTOWSLUbuntu.reg
-   -  Registry file to install a right-click option for restoring .vhdx files. DISCLAIMER - PLEASE READ FILE FIRST FOR YOUR OWN PROTECTION.
+   -  Registry file to install a right-click option for restoring .vhdx files. DISCLAIMER - PLEASE READ FILE FIRST FOR YOUR OWN PEACE OF MIND.
    -  Once added to your registry, you can right-click on a .vdhx file and select <b>RestoreToWSL</b>.
    -  There are no stops here. If you right-click a .vdhx file and select this option to restore, it will replace your 
       current Ubuntu with the saved copy. 
 
 6. bkupwslubuntu.ps1
-   - Since VSCODE and Docker Desktop can interfere with 
+   - On first run, you will be asked to enter the backup directory. This directory will contain a sub-folder for each distro.
+   
+   - Since VSCODE and Docker Desktop can interfere with the backup, a check is performed. 
+     a. If VSCODE is running, just quit.
+     b. If Docker Desktop is running, use the taskbar icon in the toolbar tray (far right icons) to QUIT DOCKER.
+   
    - This backup routine will collect a list of distors. If only one distor, it will proceed with the backup. 
      If more than one, it will allow you to select your distro, defaulting to the last selection.
-
-
-
-   - Selected distro will be backedup and saved to backup directory under the distro name.
-   - For example, if backup directory is c:/wslbackups (default), and you are backing up ubuntu, the destination directory is c:/wslbackups/ubuntu.
-   - On first run you will be required to enter the backup directory. Default is c:/wslbackups. Directory must exist.
-   - Last distro selected for backup will be automatically re-selected in the list.
+   
+   - Selected distro will be backedup and saved to backup directory in a sub-folder matching the distro name.
+     For example, if backup directory is c:/wslbackups (default), and you are backing up ubuntu, the destination directory is c:/wslbackups/ubuntu.
+   
    - Last distro and backup directory are stored in file wslbackup.ini. This file is in the same location as the powershell script.
-   - If there is only one distro then user will not be presented with a selection list (time-saver).
   
-7. dockerstop.ps1
-   - This script stops Docker Desktop. You need to do this before backing up or the backup will fail.
-
 8. rbkupwslubuntu.bat
    - First install the setRestoreToWslUbuntu.reg file to install a right-click option for restoring a .vhdx.
    - Right-click on .vhdx and select RestoreToWSLUbuntu. 
-   - After, if you are using Docker, you will need to restart Docker.
-   - This batch file looks at the file name paramter deriving the name of the wsl2 instance. E.g. ubuntu.
-   - The vdhx file is restored to c:\wsldistros\<<name of wsl2 instance>>. E.g. c:\wsldistros\ubuntu\ext4.vdhx
-
-9. cmdDockerRestart.bat
-   - not in use. However, I don't want to toss the code. Instead, create a shortcut to Docker Desktop and if you like, set a hotkey.
+   - The 1st word of the restore file is the name of the distro that will be restored. 
+     For example: ubuntu-11-06-2023-21-41.vhdx will restore and show up in wsl -l -v as ubuntu.
+   - The ext4.vhdx restored file will be located in the folder c:\wsldistro in a sub-folder matching the distro name.
 
 For hot keys under windows, I use Executor. See this website https://executor.dk
+1. Backup hotkey
+   Command: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+   Parameter: -ExecutionPolicy Bypass -File  "C:\Development\tools\wsltools\bkupwslubuntu.ps1"
+2. Hotkey for starting Windows Terminal
+   Command: wt
+   Parameter: -p Ubuntu
+3. I also have hotkeys for starting Docker Desktop and for opening the backup directory.
 
 Mark Ryan
 mryan.dev@outlook.com
