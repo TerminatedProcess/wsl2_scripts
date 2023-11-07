@@ -1,1 +1,0 @@
-powershell start-process powershell -verb runas c:\development\tools\dockerrestart.ps1

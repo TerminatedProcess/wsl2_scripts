@@ -1,17 +1,21 @@
-Write-Output "$((Get-Date).ToString("HH:mm:ss")) - Stopping docker"
+Write-Output "$((Get-Date).ToString("HH:mm:ss")) - Attempting to stop Docker Desktop..."
 
-foreach($svc in (Get-Service | Where-Object {$_.name -ilike "*docker*" -and $_.Status -ieq "Running"}))
-{
-    $svc | Stop-Service -ErrorAction Continue -Confirm:$false -Force
-    $svc.WaitForStatus('Stopped','00:00:20')
+# Stop Docker Desktop service if it exists and is running
+$dockerService = Get-Service -Name 'com.docker.service' -ErrorAction SilentlyContinue
+if ($dockerService -and $dockerService.Status -eq 'Running') {
+    Stop-Service $dockerService.Name -Force
+    Write-Output "$((Get-Date).ToString("HH:mm:ss")) - Docker service stopped."
+} else {
+    Write-Output "$((Get-Date).ToString("HH:mm:ss")) - Docker service not running or not found."
 }
 
-Get-Process | Where-Object {$_.Name -ilike "*docker*"} | Stop-Process -ErrorAction Continue -Confirm:$false -Force
-
-foreach($svc in (Get-Service | Where-Object {$_.name -ilike "*docker*" -and $_.Status -ieq "Stopped"} ))
-{
-    $svc | Start-Service 
-    $svc.WaitForStatus('Running','00:00:20')
+# Stop Docker Desktop processes
+$dockerProcesses = Get-Process -Name 'Docker*' -ErrorAction SilentlyContinue
+if ($dockerProcesses) {
+    $dockerProcesses | Stop-Process -Force
+    Write-Output "$((Get-Date).ToString("HH:mm:ss")) - Docker processes stopped."
+} else {
+    Write-Output "$((Get-Date).ToString("HH:mm:ss")) - No Docker processes found."
 }
-Write-Output "$((Get-Date).ToString("HH:mm:ss")) - Docker for Desktop stopped"
 
+Write-Output "$((Get-Date).ToString("HH:mm:ss")) - Docker Desktop should now be stopped."
