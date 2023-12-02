@@ -263,3 +263,4 @@ if (-Not (Test-Path $outFile)) {
     Write-Host "Backup completed successfully."
     explorer $destDir
 }
+Read-Host -Prompt "Press Enter to continue"
