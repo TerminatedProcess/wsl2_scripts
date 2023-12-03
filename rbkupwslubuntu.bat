@@ -24,8 +24,12 @@ wsl --shutdown
 wsl --unregister %wsl_os%
 wsl --import %wsl_os% %destDir% %inFile% --vhd
 wsl --setdefault %wsl_os%
-:: ubuntu config --default-user dev
-:: instead setup wsl.config default section
+@echo off
+echo To set default user (example is username dev)
+echo sudo vi /etc/wsl.conf. Add the following:
+echo [user]
+echo default=dev
+
 pause
 exit
 
