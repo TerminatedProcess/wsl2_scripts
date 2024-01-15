@@ -21,13 +21,14 @@ Tools:
      a. If VSCODE is running, just quit.
      b. If Docker Desktop is running, use the taskbar icon in the toolbar tray (far right icons) to QUIT DOCKER.
    
-   - This backup routine will collect a list of distors. If only one distor, it will proceed with the backup. 
-     If more than one, it will allow you to select your distro, defaulting to the last selection.
+   - This backup routine will collect a list of WSL2 instances. If only one instance is found, it will just proceed with the backup. 
+     If more than one, it will allow you to select which instance you want to backup, defaulting to the last instance selected.
    
-   - Selected distro will be backedup and saved to backup directory in a sub-folder matching the distro name.
+   - Selected distro will be backed up and saved to backup directory in a sub-folder matching the instance name.
      For example, if backup directory is c:/wslbackups (default), and you are backing up ubuntu, the destination directory is c:/wslbackups/ubuntu.
+     Inside this directory will be placed a backup with the format of <<instance name>>-datetimestamp.vdhx
    
-   - Last distro and backup directory are stored in file wslbackup.ini. This file is in the same location as the powershell script.
+   - THe last instance selected and the backup directory are stored in file wslbackup.ini. This file is in the same location as the powershell scripts.
   
 8. rbkupwslubuntu.bat
    - First install the setRestoreToWslUbuntu.reg file to install a right-click option for restoring a .vhdx.
