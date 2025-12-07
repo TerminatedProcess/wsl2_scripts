@@ -1,3 +1,5 @@
+NOTE: I no longer use Windows (Linux for the past year or so) and am not maintaining this project. I'll keep it hosted on Github though.
+
 Windows 11 utility scripts for WSL2 Backup and Restore of Containers
 Author: Mark Ryan (terminatedprocess)
 
@@ -48,3 +50,4 @@ For hot keys under windows, I use Executor. See this website https://executor.dk
 
 Mark Ryan
 mryan.dev@outlook.com
+
